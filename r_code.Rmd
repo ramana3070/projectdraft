@@ -1,0 +1,86 @@
+---
+title: "Housepriceprediction"
+author: "Ramana"
+output: pdf_document
+---
+
+```{r}
+#Loading the dataset
+data=read.csv("data.csv")
+
+```
+
+```{r}
+#Summary of dataset
+summary(data)
+```
+
+```{r}
+head(data)
+```
+
+Data Cleaning
+```{r}
+sum(is.na(data))
+#There are no missing values in the dataset taken
+```
+
+```{r}
+colSums(data==0)
+#There are 49 rows with price values as 0 . We need to remove these rows
+```
+
+```{r,include=FALSE}
+data$price<-replace(data$price,data$price==0,NA)
+```
+
+```{r}
+sum(is.na(data))
+```
+```{r,include=FALSE}
+library(tidyr)
+data[complete.cases(data$price),]
+#We have successfully removed rows which were having 0 as price values.
+```
+
+```{r}
+#normalizing price values
+data$price<-data$price/10000
+```
+
+
+
+Visualization
+```{r}
+library(ggplot2)
+```
+
+```{r}
+ggplot(data,aes(sqft_living,y=price))+
+  geom_point(color="blue")
+```
+
+```{r}
+ggplot(data,aes(x=as.factor(bedrooms),fill=as.factor(bedrooms)))+
+  geom_bar()
+```
+
+```{r}
+ggplot(data,aes(condition))+
+  geom_bar(color="red")
+```
+
+
+Data splitting into test and train dataset
+```{r}
+ratio<-floor((nrow(data)/5)*4)
+data<-data[sample(nrow(data)),]
+train_data<-data[1:ratio,]
+test_data<-data[(ratio+1):nrow(data),]
+```
+
+```{r}
+#The dataset is now split into 20% test data and 80% train data
+print(dim(train_data))
+dim(test_data)
+```
